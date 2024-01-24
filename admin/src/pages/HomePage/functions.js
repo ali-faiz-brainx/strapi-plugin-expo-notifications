@@ -15,7 +15,7 @@ export function buildReceiversOptions(receivers) {
   let options = [];
   receivers.forEach((receiver) => {
     options.push({
-      label: receiver.username,
+      label: receiver.address,
       value: receiver.expoPushToken,
     });
   });

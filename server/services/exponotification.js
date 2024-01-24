@@ -1,7 +1,7 @@
-"use strict";
-const { Expo } = require("expo-server-sdk");
-const getExpoSender = require("./expoSender");
-const getManageReceipts = require("./manageReceipts");
+'use strict';
+const { Expo } = require('expo-server-sdk');
+const getExpoSender = require('./expoSender');
+const getManageReceipts = require('./manageReceipts');
 
 const getStartFromQuery = (query) => {
   const { page, pageSize } = query;
@@ -14,38 +14,37 @@ const getStartFromQuery = (query) => {
 module.exports = ({ strapi }) => ({
   async find(query) {
     return await strapi.entityService.findMany(
-      "plugin::expo-notifications.exponotification",
+      'plugin::expo-notifications.exponotification',
       query
     );
   },
-  async findFrom(query = { page: "1", pageSize: "10" }) {
+  async findFrom(query = { page: '1', pageSize: '10' }) {
     const start = getStartFromQuery(query);
     const count = await strapi.entityService.count(
-      "plugin::expo-notifications.exponotification"
+      'plugin::expo-notifications.exponotification'
     );
     const notifications = await strapi.entityService.findMany(
-      "plugin::expo-notifications.exponotification",
+      'plugin::expo-notifications.exponotification',
       {
         start: start,
         limit: query.pageSize,
-        sort: "createdAt:desc",
+        sort: 'createdAt:desc',
       }
     );
     return { notifications, count };
   },
   async recipientsFrom(start) {
-    const count = await strapi.entityService.count(
-      "plugin::users-permissions.user"
-    );
+    const count = await strapi.entityService.count('api::referral.referral');
     const customFieldName = await strapi
-      .plugin("expo-notifications")
-      .config("customFieldName");
+      .plugin('expo-notifications')
+      .config('customFieldName');
     let recipients = [];
     if (customFieldName) {
       const rawRecipients = await strapi.entityService.findMany(
-        "plugin::users-permissions.user",
+        'api::referral.referral',
         {
           start: start,
+          limit: 200,
           filters: {
             [customFieldName]: {
               $notNull: true,
@@ -59,9 +58,10 @@ module.exports = ({ strapi }) => ({
       });
     } else {
       recipients = await strapi.entityService.findMany(
-        "plugin::users-permissions.user",
+        'api::referral.referral',
         {
           start: start,
+          limit: 200,
           filters: {
             expoPushToken: {
               $notNull: true,
@@ -93,7 +93,7 @@ module.exports = ({ strapi }) => ({
       let chunk = chunks[0][i];
       let ticket = tickets[i];
       // Only take the tickets with errors, indicating a sending error
-      if (ticket.status !== "ok") {
+      if (ticket.status !== 'ok') {
         combinedArray.push({
           to: chunk.to,
           status: ticket.status,
@@ -102,7 +102,7 @@ module.exports = ({ strapi }) => ({
       }
     }
     const strapiNotificationResult = await strapi.entityService.create(
-      "plugin::expo-notifications.exponotification",
+      'plugin::expo-notifications.exponotification',
       {
         data: {
           title: data.title,
@@ -113,7 +113,7 @@ module.exports = ({ strapi }) => ({
       }
     );
     console.log(
-      "strapiNotificationResult from process notifs",
+      'strapiNotificationResult from process notifs',
       strapiNotificationResult
     );
     if (strapiNotificationResult) {
@@ -121,16 +121,20 @@ module.exports = ({ strapi }) => ({
     }
     return { tickets, strapiNotificationResult };
   },
+  async sendToAll() {
+    console.log('inside sendToAll API');
+    return null;
+  },
   async update(id, data) {
     return await strapi.entityService.update(
-      "plugin::expo-notifications.exponotification",
+      'plugin::expo-notifications.exponotification',
       id,
       data
     );
   },
   async delete(id) {
     return await strapi.entityService.delete(
-      "plugin::expo-notifications.exponotification",
+      'plugin::expo-notifications.exponotification',
       id
     );
   },

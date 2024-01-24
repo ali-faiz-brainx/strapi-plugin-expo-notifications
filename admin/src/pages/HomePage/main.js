@@ -1,28 +1,28 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-import { Switch, Route } from "react-router-dom";
-import Empty from "./empty";
-import { useFetchClient } from "@strapi/helper-plugin";
+import { Switch, Route } from 'react-router-dom';
+import Empty from './empty';
+import { useFetchClient } from '@strapi/helper-plugin';
 
-import { Icon } from "@strapi/design-system/Icon";
-import { useFormik } from "formik";
-import * as Yup from "yup";
+import { Icon } from '@strapi/design-system/Icon';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 import {
   BaseHeaderLayout,
   TwoColsLayout,
   ContentLayout,
-} from "@strapi/design-system/Layout";
+} from '@strapi/design-system/Layout';
 
-import { useIntl } from "react-intl";
+import { useIntl } from 'react-intl';
 
-import Sender from "./sender";
-import Sent from "./sent";
-import Receivers from "./receivers";
+import Sender from './sender';
+import Sent from './sent';
+import Receivers from './receivers';
 
-import pluginId from "../../pluginId";
-import getTrad from "../../utils/getTrad";
-import { getContentTypeName } from "./functions";
+import pluginId from '../../pluginId';
+import getTrad from '../../utils/getTrad';
+import { getContentTypeName } from './functions';
 
 const Pencil = () => (
   <Icon
@@ -61,22 +61,21 @@ export default function Main({
   };
   const formik = useFormik({
     initialValues: {
-      title: "",
-      subtitle: "",
-      contentType: "",
-      entryId: "",
+      title: '',
+      subtitle: '',
+      data: {},
     },
     validationSchema: Yup.object({
       title: Yup.string().required(
         formatMessage({
-          id: getTrad("form.required"),
-          defaultMessage: "Required field",
+          id: getTrad('form.required'),
+          defaultMessage: 'Required field',
         })
       ),
     }),
     onSubmit: async (values) => {
       values.contentType = getContentTypeName(values.contentType);
-      console.log("modified values from send test", values);
+      console.log('modified values from send test', values);
       if (testMode) {
         const testTokens = [testToken];
         values.title = `[Test] ${values.title}`;
@@ -98,7 +97,7 @@ export default function Main({
           resetForm();
         });
       } else {
-        console.log("no receivers");
+        console.log('no receivers');
       }
     },
   });
@@ -117,27 +116,43 @@ export default function Main({
     formik.handleSubmit();
   };
 
+  const sendToAll = async (e) => {
+    e.preventDefault();
+    await myRequests.sendNotificatiosToAll().then((res) => {
+      refreshNotificationsState();
+      resetForm();
+    });
+  };
+
   return (
     <div>
       <BaseHeaderLayout
         title={formatMessage({
-          id: getTrad("plugin.name"),
-          defaultMessage: "My notifications",
+          id: getTrad('plugin.name'),
+          defaultMessage: 'My notifications',
         })}
         subtitle={`${count} ${formatMessage({
-          id: getTrad("header.subtitle"),
-          defaultMessage: "sent notifications",
+          id: getTrad('header.subtitle'),
+          defaultMessage: 'sent notifications',
         })}`}
         as="h2"
       />
       <ContentLayout>
-        <TwoColsLayout
+        <Sender
+          formik={formik}
+          sendTest={sendTest}
+          sendForReal={sendForReal}
+          testToken={testToken}
+          sendToAll={sendToAll}
+        />
+        {/* <TwoColsLayout
           startCol={
             <Sender
               formik={formik}
               sendTest={sendTest}
               sendForReal={sendForReal}
               testToken={testToken}
+              sendToAll={sendToAll}
             />
           }
           endCol={
@@ -152,7 +167,7 @@ export default function Main({
               removeAll={removeAll}
             />
           }
-        />
+        /> */}
         <div style={{ paddingTop: 12 }}>
           <Switch>
             <Route path={`/plugins/${pluginId}`} exact>
