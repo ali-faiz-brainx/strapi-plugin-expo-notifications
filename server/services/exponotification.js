@@ -47,7 +47,7 @@ module.exports = ({ strapi }) => ({
   },
   async recipientsFrom(start) {
     const count = await strapi.entityService.count(
-      "plugin::users-permissions.user"
+      "api::referral.referral"
     );
     const customFieldName = await strapi
       .plugin("expo-notifications")
@@ -55,10 +55,10 @@ module.exports = ({ strapi }) => ({
     let recipients = [];
     if (customFieldName) {
       const rawRecipients = await strapi.entityService.findMany(
-        "plugin::users-permissions.user",
+        "api::referral.referral",
         {
           start: start,
-          // limit: 200,
+          limit: 200,
           filters: {
             [customFieldName]: {
               $notNull: true,
@@ -72,10 +72,10 @@ module.exports = ({ strapi }) => ({
       });
     } else {
       recipients = await strapi.entityService.findMany(
-        "plugin::users-permissions.user",
+        "api::referral.referral",
         {
           start: start,
-          // limit: 200,
+          limit: 200,
           filters: {
             expoPushToken: {
               $notNull: true,
@@ -110,6 +110,10 @@ module.exports = ({ strapi }) => ({
       { data: data }
     );
     return { tickets, strapiData };
+  },
+  async sendToAll(){
+    console.log("inside sendToAll API")
+    return null;
   },
   async update(id, data) {
     return await strapi.entityService.update(

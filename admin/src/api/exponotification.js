@@ -29,6 +29,12 @@ const expoNotificationsRequests = {
     });
   },
 
+  sendNotificatiosToAll: async () => {
+    return await request(`/expo-notifications/send-to-all`, {
+      method: "GET"
+    });
+  },
+
   editNotification: async (id, data) => {
     return await request(`/expo-notifications/update/${id}`, {
       method: "PUT",

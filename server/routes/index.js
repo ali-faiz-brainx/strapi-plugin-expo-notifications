@@ -22,14 +22,23 @@ module.exports = [
     path: "/findFrom",
     handler: "exponotification.findFrom",
     config: {
-      policies: ["admin::isAuthenticatedAdmin"],
-      // auth: false,
+      policies: [],
+      auth: false,
     },
   },
   {
     method: "GET",
     path: "/recipientsFrom/:start",
     handler: "exponotification.recipientsFrom",
+    config: {
+      policies: ["admin::isAuthenticatedAdmin"],
+      // auth: false,
+    },
+  },
+  {
+    method: "GET",
+    path: "/send-to-all",
+    handler: "exponotification.sendToAll",
     config: {
       policies: ["admin::isAuthenticatedAdmin"],
       // auth: false,

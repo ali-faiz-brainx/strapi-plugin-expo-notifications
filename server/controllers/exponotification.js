@@ -54,6 +54,16 @@ module.exports = {
       ctx.throw(500, err);
     }
   },
+  async sendToAll(ctx){
+    try {
+      ctx.body = await strapi
+        .plugin("expo-notifications")
+        .service("exponotification")
+        .sendToAll();
+    } catch (err) {
+      ctx.throw(500, err);
+    }
+  },
   async update(ctx) {
     try {
       ctx.body = await strapi

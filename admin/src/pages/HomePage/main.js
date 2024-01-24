@@ -62,6 +62,7 @@ export default function Main({
     initialValues: {
       title: "",
       subtitle: "",
+      data: {},
     },
     validationSchema: Yup.object({
       title: Yup.string().required(
@@ -106,6 +107,14 @@ export default function Main({
     formik.handleSubmit();
   };
 
+  const sendToAll = async (e) => {
+    e.preventDefault();
+    await myRequests.sendNotificatiosToAll().then((res) => {
+      refreshNotificationsState();
+      resetForm();
+    });
+  }
+
   return (
     <div>
       <BaseHeaderLayout
@@ -120,13 +129,21 @@ export default function Main({
         as="h2"
       />
       <ContentLayout>
-        <TwoColsLayout
+      <Sender
+              formik={formik}
+              sendTest={sendTest}
+              sendForReal={sendForReal}
+              testToken={testToken}
+              sendToAll={sendToAll}
+            />
+        {/* <TwoColsLayout
           startCol={
             <Sender
               formik={formik}
               sendTest={sendTest}
               sendForReal={sendForReal}
               testToken={testToken}
+              sendToAll={sendToAll}
             />
           }
           endCol={
@@ -141,7 +158,7 @@ export default function Main({
               removeAll={removeAll}
             />
           }
-        />
+        /> */}
         <div style={{ paddingTop: 12 }}>
           <Switch>
             <Route path={`/plugins/${pluginId}`} exact>
