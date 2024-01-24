@@ -1,28 +1,28 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-import { Switch, Route } from "react-router-dom";
-import { NotFound } from "@strapi/helper-plugin";
+import { Switch, Route } from 'react-router-dom';
+import Empty from './empty';
+import { useFetchClient } from '@strapi/helper-plugin';
 
-import myRequests from "../../api/exponotification";
-
-import { Icon } from "@strapi/design-system/Icon";
-import { useFormik } from "formik";
-import * as Yup from "yup";
+import { Icon } from '@strapi/design-system/Icon';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 import {
   BaseHeaderLayout,
   TwoColsLayout,
   ContentLayout,
-} from "@strapi/design-system/Layout";
+} from '@strapi/design-system/Layout';
 
-import { useIntl } from "react-intl";
+import { useIntl } from 'react-intl';
 
-import Sender from "./sender";
-import Sent from "./sent";
-import Receivers from "./receivers";
+import Sender from './sender';
+import Sent from './sent';
+import Receivers from './receivers';
 
-import pluginId from "../../pluginId";
-import getTrad from "../../utils/getTrad";
+import pluginId from '../../pluginId';
+import getTrad from '../../utils/getTrad';
+import { getContentTypeName } from './functions';
 
 const Pencil = () => (
   <Icon
@@ -44,6 +44,7 @@ export default function Main({
 }) {
   const [tokens, setTokens] = useState([]);
   const [testMode, setTestMode] = useState(false);
+  const { post } = useFetchClient();
   const { formatMessage } = useIntl();
   const addToken = (token) => {
     setTokens([...tokens, token]);
@@ -60,35 +61,43 @@ export default function Main({
   };
   const formik = useFormik({
     initialValues: {
-      title: "",
-      subtitle: "",
+      title: '',
+      subtitle: '',
       data: {},
     },
     validationSchema: Yup.object({
       title: Yup.string().required(
         formatMessage({
-          id: getTrad("form.required"),
-          defaultMessage: "Required field",
+          id: getTrad('form.required'),
+          defaultMessage: 'Required field',
         })
       ),
     }),
     onSubmit: async (values) => {
+      values.contentType = getContentTypeName(values.contentType);
+      console.log('modified values from send test', values);
       if (testMode) {
         const testTokens = [testToken];
         values.title = `[Test] ${values.title}`;
-        await myRequests.createNotification(values, testTokens).then((res) => {
+        await post(`/expo-notifications/process-notification`, {
+          data: values,
+          tokens: testTokens,
+        }).then((res) => {
           refreshNotificationsState();
           resetForm();
         });
         return;
       }
       if (tokens.length !== 0) {
-        await myRequests.createNotification(values, tokens).then((res) => {
+        await post(`/expo-notifications/process-notification`, {
+          data: values,
+          tokens: tokens,
+        }).then((res) => {
           refreshNotificationsState();
           resetForm();
         });
       } else {
-        console.log("no receivers");
+        console.log('no receivers');
       }
     },
   });
@@ -113,29 +122,29 @@ export default function Main({
       refreshNotificationsState();
       resetForm();
     });
-  }
+  };
 
   return (
     <div>
       <BaseHeaderLayout
         title={formatMessage({
-          id: getTrad("plugin.name"),
-          defaultMessage: "My notifications",
+          id: getTrad('plugin.name'),
+          defaultMessage: 'My notifications',
         })}
         subtitle={`${count} ${formatMessage({
-          id: getTrad("header.subtitle"),
-          defaultMessage: "sent notifications",
+          id: getTrad('header.subtitle'),
+          defaultMessage: 'sent notifications',
         })}`}
         as="h2"
       />
       <ContentLayout>
-      <Sender
-              formik={formik}
-              sendTest={sendTest}
-              sendForReal={sendForReal}
-              testToken={testToken}
-              sendToAll={sendToAll}
-            />
+        <Sender
+          formik={formik}
+          sendTest={sendTest}
+          sendForReal={sendForReal}
+          testToken={testToken}
+          sendToAll={sendToAll}
+        />
         {/* <TwoColsLayout
           startCol={
             <Sender
@@ -168,7 +177,7 @@ export default function Main({
                 isLoading={isLoading}
               />
             </Route>
-            <Route component={NotFound} />
+            <Route component={Empty} />
           </Switch>
         </div>
       </ContentLayout>

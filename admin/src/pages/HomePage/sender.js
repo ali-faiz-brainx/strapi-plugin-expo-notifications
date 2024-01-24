@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 import {
   Box,
@@ -8,12 +8,20 @@ import {
   Field,
   FieldLabel,
   FieldInput,
-} from "@strapi/design-system";
+} from '@strapi/design-system';
 
-import { useIntl } from "react-intl";
-import getTrad from "../../utils/getTrad";
+import SwitchAttachAnEntry from './switch_attach';
 
-export default function Sender({ formik, sendTest, sendForReal, testToken, sendToAll }) {
+import { useIntl } from 'react-intl';
+import getTrad from '../../utils/getTrad';
+
+export default function Sender({
+  formik,
+  sendTest,
+  sendForReal,
+  testToken,
+  sendToAll,
+}) {
   const { formatMessage } = useIntl();
   return (
     <div style={{ height: 315 }}>
@@ -21,8 +29,8 @@ export default function Sender({ formik, sendTest, sendForReal, testToken, sendT
         <Box paddingTop={2} paddingBottom={4}>
           <Typography variant="beta">
             {formatMessage({
-              id: getTrad("title.new"),
-              defaultMessage: "New notification",
+              id: getTrad('title.new'),
+              defaultMessage: 'New notification',
             })}
           </Typography>
         </Box>
@@ -31,15 +39,15 @@ export default function Sender({ formik, sendTest, sendForReal, testToken, sendT
             <Field name="title">
               <FieldLabel>
                 {formatMessage({
-                  id: getTrad("title"),
-                  defaultMessage: "Title",
+                  id: getTrad('title'),
+                  defaultMessage: 'Title',
                 })}
               </FieldLabel>
               <FieldInput
                 type="text"
                 placeholder={formatMessage({
-                  id: getTrad("title.placeholder"),
-                  defaultMessage: "Chose a title",
+                  id: getTrad('title.placeholder'),
+                  defaultMessage: 'Chose a title',
                 })}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -49,15 +57,15 @@ export default function Sender({ formik, sendTest, sendForReal, testToken, sendT
             <Field name="subtitle">
               <FieldLabel>
                 {formatMessage({
-                  id: getTrad("subtitle"),
-                  defaultMessage: "Subtitle",
+                  id: getTrad('subtitle'),
+                  defaultMessage: 'Subtitle',
                 })}
               </FieldLabel>
               <FieldInput
                 type="text"
                 placeholder={formatMessage({
-                  id: getTrad("subtitle.placeholder"),
-                  defaultMessage: "Chose a subtitle",
+                  id: getTrad('subtitle.placeholder'),
+                  defaultMessage: 'Chose a subtitle',
                 })}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -67,15 +75,15 @@ export default function Sender({ formik, sendTest, sendForReal, testToken, sendT
             <Field name="data.imageUrl">
               <FieldLabel>
                 {formatMessage({
-                  id: getTrad("data.imageUrl"),
-                  defaultMessage: "Image URL",
+                  id: getTrad('data.imageUrl'),
+                  defaultMessage: 'Image URL',
                 })}
               </FieldLabel>
               <FieldInput
                 type="text"
                 placeholder={formatMessage({
-                  id: getTrad("data.imageUrl.placeholder"),
-                  defaultMessage: "Chose an Image URL",
+                  id: getTrad('data.imageUrl.placeholder'),
+                  defaultMessage: 'Chose an Image URL',
                 })}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -85,8 +93,9 @@ export default function Sender({ formik, sendTest, sendForReal, testToken, sendT
           </Stack>
           <div
             style={{
-              display: "flex",
-              justifyContent: "flex-end",
+              height: 300,
+              display: 'flex',
+              justifyContent: 'flex-end',
               marginTop: 6,
               marginBottom: 14,
             }}
@@ -94,16 +103,16 @@ export default function Sender({ formik, sendTest, sendForReal, testToken, sendT
             {testToken && (
               <Button variant="secondary" type="submit" onClick={sendTest}>
                 {formatMessage({
-                  id: getTrad("send.test"),
-                  defaultMessage: "Send a test",
+                  id: getTrad('send.test'),
+                  defaultMessage: 'Send a test',
                 })}
               </Button>
             )}
             <div style={{ marginLeft: 8 }}>
               <Button type="submit" onClick={sendToAll}>
                 {formatMessage({
-                  id: getTrad("send.to.all"),
-                  defaultMessage: "Send to all",
+                  id: getTrad('send.to.all'),
+                  defaultMessage: 'Send to all',
                 })}
               </Button>
             </div>

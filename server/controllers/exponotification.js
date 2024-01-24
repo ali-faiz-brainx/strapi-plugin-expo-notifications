@@ -1,6 +1,31 @@
 "use strict";
 
 module.exports = {
+  async lastEntries(ctx) {
+    const { contentTypeUid } = ctx.params;
+    try {
+      const entries = await strapi.entityService.findMany(contentTypeUid, {
+        sort: { updatedAt: "desc" },
+        limit: 10,
+      });
+      ctx.send(entries);
+    } catch (err) {
+      console.log(err);
+    }
+  },
+  getContentTypes(ctx) {
+    let contentTypes = [];
+    Object.values(strapi.contentTypes).map((contentType) => {
+      if (
+        (contentType.kind === "collectionType" ||
+          contentType.kind === "singleType") &&
+        !contentType.plugin
+      ) {
+        contentTypes.push(contentType);
+      }
+    });
+    return contentTypes;
+  },
   async getPluginConfig(ctx) {
     try {
       const testToken = await strapi
@@ -44,12 +69,16 @@ module.exports = {
       ctx.throw(500, err);
     }
   },
-  async create(ctx) {
+  async processNotification(ctx) {
+    console.log(
+      "received a create request with ctx.request.body",
+      ctx.request.body
+    );
     try {
       ctx.body = await strapi
         .plugin("expo-notifications")
         .service("exponotification")
-        .create(ctx.request.body);
+        .processNotification(ctx.request.body);
     } catch (err) {
       ctx.throw(500, err);
     }
